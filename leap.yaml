@@ -1,0 +1,17 @@
+codeIntegrationId: 6512b398c05dc3001986be3b
+projectId: 64eb71ef18fef000207c8734
+secretId: ""
+entryFile: leap_binder.py
+include:
+    - leap_binder.py
+    - terrasense_od/data/preprocessing.py
+    - terrasense_od/visualizers/visualizers.py
+    - terrasense_od/visualizers/visualizers_getters.py
+    - terrasense_od/utils/general_utils.py
+    - terrasense_od/utils/gcs_utils.py
+    - terrasense_od/utils/ioa_utils.py
+    - terrasense_od/yolo_helpers/yolo_utils.py
+    - terrasense_od/metrics.py
+    - terrasense_od/config.py
+    - terrasense_od/object_detection_config.yml
+    - object_detection_config.yaml

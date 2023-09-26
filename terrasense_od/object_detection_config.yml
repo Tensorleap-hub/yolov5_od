@@ -1,0 +1,49 @@
+dataset_path: /Users/ranhomri/tensorleap/data/coco-2017/validation
+
+BATCH_SIZE: 4
+TRAIN_SIZE: 16
+VAL_SIZE: 16
+BACKGROUND_LABEL: 81
+
+CLASSES: 80
+CONF_THRESH: 0.35
+CATEGORIES:
+  - person
+FEATURE_MAPS:
+- - 80
+  - 80
+- - 40
+  - 40
+- - 20
+  - 20
+BOX_SIZES:
+- - - 4.90625
+    - 4.984375
+  - - 2.34375
+    - 19.03125
+  - - 11.4765625
+    - 12.9375
+- - - 11.0625
+    - 58.625
+  - - 35.96875
+    - 31.96875
+  - - 152.625
+    - 24.9375
+- - - 120.6875
+    - 105.9375
+  - - 531
+    - 59.59375
+  - - 471.75
+    - 237.125
+IMAGE_SIZE: [640, 640]
+LOAD_UNION_CATEGORIES_IMAGES: true
+MAX_BB_PER_IMAGE: 20
+MODEL_FORMAT: inference
+NMS_THRESH: 0.5
+OFFSET: 0
+OVERLAP_THRESH: 0.0625
+SMALL_BBS_TH: 0.0003
+STRIDES:
+- 8
+- 16
+- 32
