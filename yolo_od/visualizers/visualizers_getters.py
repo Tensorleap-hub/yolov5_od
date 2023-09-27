@@ -1,6 +1,6 @@
-from coco_od.utils.general_utils import get_mask_list, get_argmax_map_and_separate_masks
+from yolo_od.utils.general_utils import get_mask_list, get_argmax_map_and_separate_masks
 import numpy as np
-from coco_od.config import CONFIG
+from yolo_od.config import CONFIG
 from code_loader.contract.visualizer_classes import LeapImageMask
 
 

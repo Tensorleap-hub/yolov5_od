@@ -2,8 +2,8 @@ import onnxruntime as ort
 import numpy as np
 import tensorflow as tf
 
-from coco_od.metrics import od_loss
-from coco_od.visualizers.visualizers import (
+from yolo_od.metrics import od_loss
+from yolo_od.visualizers.visualizers import (
     gt_bb_decoder, bb_decoder
 )
 from leap_binder import (
@@ -15,7 +15,7 @@ from leap_binder import (
 def check_integration():
     model_path = 'model/yolov5s.h5'
     model = tf.keras.models.load_model(model_path)
-    batch = 16
+    batch = 4
     responses = subset_images()  # get dataset splits
     training_response = responses[0]  # [training, validation, test]
     images = []

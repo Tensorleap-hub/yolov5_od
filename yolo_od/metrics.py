@@ -2,8 +2,8 @@ from typing import Tuple, List, Union
 import tensorflow as tf
 from code_loader.helpers.detection.yolo.utils import reshape_output_list
 
-from coco_od.config import CONFIG
-from coco_od.yolo_helpers.yolo_utils import LOSS_FN
+from yolo_od.config import CONFIG
+from yolo_od.yolo_helpers.yolo_utils import LOSS_FN
 
 
 def compute_losses(obj_true: tf.Tensor, od_pred: tf.Tensor) -> Union[
