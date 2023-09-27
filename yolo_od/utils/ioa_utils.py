@@ -1,7 +1,7 @@
 import numpy as np
 
-from coco_od.config import CONFIG
-from coco_od.visualizers.visualizers_getters import multiple_mask_pred, multiple_mask_gt
+from yolo_od.config import CONFIG
+from yolo_od.visualizers.visualizers_getters import multiple_mask_pred, multiple_mask_gt
 
 
 def ioa_mask(mask_containing, mask_contained):

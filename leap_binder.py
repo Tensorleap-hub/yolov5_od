@@ -10,11 +10,11 @@ from code_loader.contract.enums import LeapDataType
 from code_loader.contract.datasetclasses import PreprocessResponse
 from pycocotools.coco import COCO
 
-from coco_od.config import CONFIG, dataset_path
-from coco_od.data.preprocessing import load_set
-from coco_od.utils.general_utils import extract_and_cache_bboxes
-from coco_od.metrics import compute_losses, od_loss
-from coco_od.visualizers.visualizers import gt_bb_decoder, bb_decoder
+from yolo_od.config import CONFIG, dataset_path
+from yolo_od.data.preprocessing import load_set
+from yolo_od.utils.general_utils import extract_and_cache_bboxes
+from yolo_od.metrics import compute_losses, od_loss
+from yolo_od.visualizers.visualizers import gt_bb_decoder, bb_decoder
 
 
 # ----------------------------------------------------data processing--------------------------------------------------

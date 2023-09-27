@@ -2,7 +2,7 @@ import numpy as np
 from code_loader.helpers.detection.yolo.loss import YoloLoss
 from code_loader.helpers.detection.yolo.grid import Grid
 from code_loader.helpers.detection.yolo.decoder import Decoder
-from coco_od.config import CONFIG
+from yolo_od.config import CONFIG
 
 BOXES_GENERATOR = Grid(image_size=CONFIG['IMAGE_SIZE'], 
                        feature_maps=CONFIG['FEATURE_MAPS'],
