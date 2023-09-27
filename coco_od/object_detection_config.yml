@@ -1,4 +1,4 @@
-dataset_path: <Fill Path to Dataset Here> # this foldr is expected to contain a json file for each subset and an `images` dir
+dataset_path: /Users/ranhomri/tensorleap/data/coco-2017 # this foldr is expected to contain a json file for each subset and an `images` dir
 
 BATCH_SIZE: 4
 TRAIN_SIZE: 16
