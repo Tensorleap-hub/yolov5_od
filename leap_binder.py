@@ -8,11 +8,10 @@ from code_loader import leap_binder
 from code_loader.contract.enums import LeapDataType
 
 from code_loader.contract.datasetclasses import PreprocessResponse
-from pycocotools.coco import COCO
 
 from yolo_od.config import CONFIG, dataset_path
-from yolo_od.data.preprocessing import load_set
-from yolo_od.utils.general_utils import extract_and_cache_bboxes
+from yolo_od.data.preprocessing import load_yolo_dataset
+from yolo_od.utils.general_utils import extract_bboxes_yolo
 from yolo_od.metrics import compute_losses, od_loss
 from yolo_od.visualizers.visualizers import gt_bb_decoder, bb_decoder
 
@@ -22,81 +21,69 @@ def subset_images() -> List[PreprocessResponse]:
     """
     This function returns the training and validation datasets in the format expected by tensorleap
     """
-    # initialize COCO api for instance annotations
-    train = COCO(os.path.join(dataset_path, 'train.json'))
-    x_train_raw = load_set(coco=train, load_union=CONFIG['LOAD_UNION_CATEGORIES_IMAGES'], local_filepath=dataset_path)
+    CONFIG['CATEGORIES'] = [str(i) for i in range(CONFIG['CLASSES'])]
+    train = load_yolo_dataset(dataset_path, split='train')
+    val = load_yolo_dataset(dataset_path, split='val')
+    test = load_yolo_dataset(dataset_path, split='test')
 
-    val = COCO(os.path.join(dataset_path, 'val.json'))
-    x_val_raw = load_set(coco=val, load_union=CONFIG['LOAD_UNION_CATEGORIES_IMAGES'], local_filepath=dataset_path)
-
-    test = COCO(os.path.join(dataset_path, 'test.json'))
-    x_test_raw = load_set(coco=test, load_union=CONFIG['LOAD_UNION_CATEGORIES_IMAGES'], local_filepath=dataset_path)
-
-    train_size = min(len(x_train_raw), CONFIG['TRAIN_SIZE'])
-    val_size = min(len(x_val_raw), CONFIG['VAL_SIZE'])
-    test_size = min(len(x_val_raw), CONFIG['TEST_SIZE'])
+    train_size = min(len(train), CONFIG['TRAIN_SIZE'])
+    val_size = min(len(val), CONFIG['VAL_SIZE'])
+    test_size = min(len(test), CONFIG['TEST_SIZE'])
 
     np.random.seed(0)
-    train_idx, val_idx, test_idx = (np.random.choice(len(x_train_raw), train_size, replace=False),
-                                    np.random.choice(len(x_val_raw), val_size, replace=False),
-                                    np.random.choice(len(x_test_raw), test_size, replace=False))
-    training_subset = PreprocessResponse(length=train_size, data={'cocofile': train,
-                                                                  'samples': np.take(x_train_raw, train_idx),
+    train_idx, val_idx, test_idx = (np.random.choice(len(train), train_size, replace=False),
+                                    np.random.choice(len(val), val_size, replace=False),
+                                    np.random.choice(len(test), test_size, replace=False))
+    training_subset = PreprocessResponse(length=train_size, data={'files': train,
+                                                                  'samples': np.take(train, train_idx),
                                                                   'subdir': 'train'})
-    validation_subset = PreprocessResponse(length=val_size, data={'cocofile': val,
-                                                                  'samples': np.take(x_val_raw, val_idx),
+    validation_subset = PreprocessResponse(length=val_size, data={'files': val,
+                                                                  'samples': np.take(val, val_idx),
                                                                   'subdir': 'val'})
-    test_subset = PreprocessResponse(length=test_size, data={'cocofile': test,
-                                                             'samples': np.take(x_test_raw, test_idx),
+    test_subset = PreprocessResponse(length=test_size, data={'files': test,
+                                                             'samples': np.take(test, test_idx),
                                                              'subdir': 'test'})
     return [training_subset, validation_subset, test_subset]
 
 
-def input_image(idx: int, data: PreprocessResponse) -> np.ndarray:
+def input_image(idx: int, data: PreprocessResponse, scale: bool = True) -> np.ndarray:
     """
     Returns a BGR image normalized and padded
     """
     data = data.data
-    x = data['samples'][idx]
-    path = os.path.join(dataset_path, f"images/{x['file_name']}")
+    image_file_name = data['samples'][idx] + '.jpg'
+    path = os.path.join(dataset_path, f"images/{data['subdir']}/{image_file_name}")
 
     # rescale
-    image = np.array(
-        Image.open(path).resize((CONFIG['IMAGE_SIZE'][0], CONFIG['IMAGE_SIZE'][1]), Image.BILINEAR)) / 255.
+    if scale:
+        image = np.array(
+            Image.open(path).resize((CONFIG['IMAGE_SIZE'][0], CONFIG['IMAGE_SIZE'][1]), Image.BILINEAR)) / 255.
+    else:
+        image = np.array(Image.open(path))
     return image
-
-
-def get_annotation_coco(idx: int, data: PreprocessResponse) -> np.ndarray:
-    x = data['samples'][idx]
-    coco = data['cocofile']
-    ann_ids = coco.getAnnIds(imgIds=x['id'])
-    anns = coco.loadAnns(ann_ids)
-    return anns
 
 
 def get_bbs(idx: int, data: PreprocessResponse) -> np.ndarray:
     data = data.data
-    bboxes = extract_and_cache_bboxes(idx, data)
+    labels_file_name = data['samples'][idx] + '.txt'
+    path = os.path.join(dataset_path, f"labels/{data['subdir']}/{labels_file_name}")
+    bboxes = extract_bboxes_yolo(path)
     return bboxes
 
 
 # ----------------------------------------------------------metadata----------------------------------------------------
 def get_fname(index: int, subset: PreprocessResponse) -> str:
     data = subset.data
-    x = data['samples'][index]
-    return x['file_name']
+    fname = data['samples'][index]
+    return fname
 
 
-def get_original_width(index: int, subset: PreprocessResponse) -> int:
-    data = subset.data
-    x = data['samples'][index]
-    return x['width']
+def get_original_width(img: np.ndarray) -> int:
+    return img.shape[1]
 
 
-def get_original_height(index: int, subset: PreprocessResponse) -> int:
-    data = subset.data
-    x = data['samples'][index]
-    return x['height']
+def get_original_height(img: np.ndarray) -> int:
+    return img.shape[0]
 
 
 def bbox_num(bbs: np.ndarray) -> int:
@@ -150,13 +137,13 @@ def count_small_bbs(bboxes: np.ndarray) -> float:
 
 def metadata_dict(idx: int, data: PreprocessResponse) -> Dict[str, Union[float, int, str]]:
     bbs = get_bbs(idx, data)
-    img = input_image(idx, data)
+    img = input_image(idx, data, scale=False)
 
     metadatas = {
         "idx": idx,
         "fname": get_fname(idx, data),
-        "origin_width": get_original_width(idx, data),
-        "origin_height": get_original_height(idx, data),
+        "origin_width": get_original_width(img),
+        "origin_height": get_original_height(img),
         "instances_number": get_instances_num(bbs),
         # "object_number": get_object_instances_num(bbs),
         "bbox_number": bbox_num(bbs),

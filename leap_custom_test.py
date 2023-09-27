@@ -15,7 +15,7 @@ from leap_binder import (
 def check_integration():
     model_path = 'model/yolov5s.h5'
     model = tf.keras.models.load_model(model_path)
-    batch = 16
+    batch = 4
     responses = subset_images()  # get dataset splits
     training_response = responses[0]  # [training, validation, test]
     images = []
