@@ -8,7 +8,7 @@ from google.oauth2 import service_account
 
 from functools import lru_cache
 
-from terrasense_od.config import CONFIG
+from coco_od.config import CONFIG
 
 
 @lru_cache()

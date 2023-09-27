@@ -2,8 +2,8 @@ import onnxruntime as ort
 import numpy as np
 import tensorflow as tf
 
-from terrasense_od.metrics import od_loss
-from terrasense_od.visualizers.visualizers import (
+from coco_od.metrics import od_loss
+from coco_od.visualizers.visualizers import (
     gt_bb_decoder, bb_decoder
 )
 from leap_binder import (

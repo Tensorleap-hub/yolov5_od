@@ -4,14 +4,14 @@ secretId: ""
 entryFile: leap_binder.py
 include:
     - leap_binder.py
-    - terrasense_od/data/preprocessing.py
-    - terrasense_od/visualizers/visualizers.py
-    - terrasense_od/visualizers/visualizers_getters.py
-    - terrasense_od/utils/general_utils.py
-    - terrasense_od/utils/gcs_utils.py
-    - terrasense_od/utils/ioa_utils.py
-    - terrasense_od/yolo_helpers/yolo_utils.py
-    - terrasense_od/metrics.py
-    - terrasense_od/config.py
-    - terrasense_od/object_detection_config.yml
+    - coco_od/data/preprocessing.py
+    - coco_od/visualizers/visualizers.py
+    - coco_od/visualizers/visualizers_getters.py
+    - coco_od/utils/general_utils.py
+    - coco_od/utils/gcs_utils.py
+    - coco_od/utils/ioa_utils.py
+    - coco_od/yolo_helpers/yolo_utils.py
+    - coco_od/metrics.py
+    - coco_od/config.py
+    - coco_od/object_detection_config.yml
     - object_detection_config.yaml

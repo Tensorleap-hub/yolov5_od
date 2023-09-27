@@ -1,0 +1,8 @@
+.idea
+.python-version
+
+# Ignore Python compiled bytecode files
+*.pyc
+
+# Ignore the Python __pycache__ directory
+__pycache__/

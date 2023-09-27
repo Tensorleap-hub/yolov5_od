@@ -4,8 +4,8 @@ import numpy as np
 from code_loader.contract.responsedataclasses import BoundingBox
 from code_loader.contract.visualizer_classes import LeapImageWithBBox
 
-from terrasense_od.config import CONFIG
-from terrasense_od.utils.general_utils import get_predict_bbox_list, \
+from coco_od.config import CONFIG
+from coco_od.utils.general_utils import get_predict_bbox_list, \
     bb_array_to_object
 
 

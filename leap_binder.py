@@ -10,11 +10,11 @@ from code_loader.contract.enums import LeapDataType
 from code_loader.contract.datasetclasses import PreprocessResponse
 from pycocotools.coco import COCO
 
-from terrasense_od.config import CONFIG, local_filepath
-from terrasense_od.data.preprocessing import load_set
-from terrasense_od.utils.general_utils import extract_and_cache_bboxes
-from terrasense_od.metrics import compute_losses, od_loss
-from terrasense_od.visualizers.visualizers import gt_bb_decoder, bb_decoder
+from coco_od.config import CONFIG, dataset_path
+from coco_od.data.preprocessing import load_set
+from coco_od.utils.general_utils import extract_and_cache_bboxes
+from coco_od.metrics import compute_losses, od_loss
+from coco_od.visualizers.visualizers import gt_bb_decoder, bb_decoder
 
 
 # ----------------------------------------------------data processing--------------------------------------------------
@@ -23,25 +23,33 @@ def subset_images() -> List[PreprocessResponse]:
     This function returns the training and validation datasets in the format expected by tensorleap
     """
     # initialize COCO api for instance annotations
-    train = COCO(os.path.join(local_filepath, 'labels.json'))
-    CONFIG['CATEGORIES'] = list(str(i) for i in range(CONFIG['CLASSES']))
-    x_train_raw = load_set(coco=train, load_union=CONFIG['LOAD_UNION_CATEGORIES_IMAGES'], local_filepath=local_filepath)
+    train = COCO(os.path.join(dataset_path, 'train.json'))
+    x_train_raw = load_set(coco=train, load_union=CONFIG['LOAD_UNION_CATEGORIES_IMAGES'], local_filepath=dataset_path)
 
-    val = COCO(os.path.join(local_filepath, 'labels.json'))
-    x_val_raw = load_set(coco=val, load_union=CONFIG['LOAD_UNION_CATEGORIES_IMAGES'], local_filepath=local_filepath)
+    val = COCO(os.path.join(dataset_path, 'val.json'))
+    x_val_raw = load_set(coco=val, load_union=CONFIG['LOAD_UNION_CATEGORIES_IMAGES'], local_filepath=dataset_path)
+
+    test = COCO(os.path.join(dataset_path, 'test.json'))
+    x_test_raw = load_set(coco=test, load_union=CONFIG['LOAD_UNION_CATEGORIES_IMAGES'], local_filepath=dataset_path)
 
     train_size = min(len(x_train_raw), CONFIG['TRAIN_SIZE'])
     val_size = min(len(x_val_raw), CONFIG['VAL_SIZE'])
+    test_size = min(len(x_val_raw), CONFIG['TEST_SIZE'])
+
     np.random.seed(0)
-    train_idx, val_idx = (np.random.choice(len(x_train_raw), train_size, replace=False),
-                          np.random.choice(len(x_val_raw), val_size, replace=False))
+    train_idx, val_idx, test_idx = (np.random.choice(len(x_train_raw), train_size, replace=False),
+                                    np.random.choice(len(x_val_raw), val_size, replace=False),
+                                    np.random.choice(len(x_test_raw), test_size, replace=False))
     training_subset = PreprocessResponse(length=train_size, data={'cocofile': train,
                                                                   'samples': np.take(x_train_raw, train_idx),
                                                                   'subdir': 'train'})
     validation_subset = PreprocessResponse(length=val_size, data={'cocofile': val,
                                                                   'samples': np.take(x_val_raw, val_idx),
-                                                                  'subdir': 'test'})
-    return [training_subset, validation_subset]
+                                                                  'subdir': 'val'})
+    test_subset = PreprocessResponse(length=test_size, data={'cocofile': test,
+                                                             'samples': np.take(x_test_raw, test_idx),
+                                                             'subdir': 'test'})
+    return [training_subset, validation_subset, test_subset]
 
 
 def input_image(idx: int, data: PreprocessResponse) -> np.ndarray:
@@ -50,7 +58,7 @@ def input_image(idx: int, data: PreprocessResponse) -> np.ndarray:
     """
     data = data.data
     x = data['samples'][idx]
-    path = os.path.join(local_filepath, f"data/{x['file_name']}")
+    path = os.path.join(dataset_path, f"images/{x['file_name']}")
 
     # rescale
     image = np.array(
@@ -182,7 +190,6 @@ def general_metrics_dict(bb_gt: tf.Tensor, detection_pred: tf.Tensor) -> Dict[st
 # ---------------------------------------------------------binding------------------------------------------------------
 # preprocess function
 leap_binder.set_preprocess(subset_images)
-
 
 # unlabeled data preprocess
 # set input and gt

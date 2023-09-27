@@ -7,8 +7,8 @@ from code_loader.contract.responsedataclasses import BoundingBox
 from code_loader.helpers.detection.utils import xyxy_to_xywh_format, xywh_to_xyxy_format
 from code_loader.helpers.detection.yolo.utils import reshape_output_list
 from numpy._typing import NDArray
-from terrasense_od.config import CONFIG
-from terrasense_od.yolo_helpers.yolo_utils import DECODER, DEFAULT_BOXES
+from coco_od.config import CONFIG
+from coco_od.yolo_helpers.yolo_utils import DECODER, DEFAULT_BOXES
 
 
 def get_predict_bbox_list(data: tf.Tensor) -> List[BoundingBox]:

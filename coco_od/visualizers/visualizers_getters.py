@@ -1,6 +1,6 @@
-from terrasense_od.utils.general_utils import get_mask_list, get_argmax_map_and_separate_masks
+from coco_od.utils.general_utils import get_mask_list, get_argmax_map_and_separate_masks
 import numpy as np
-from terrasense_od.config import CONFIG
+from coco_od.config import CONFIG
 from code_loader.contract.visualizer_classes import LeapImageMask
 
 
