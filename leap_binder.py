@@ -52,7 +52,7 @@ def input_image(idx: int, data: PreprocessResponse, scale: bool = True) -> np.nd
     """
     data = data.data
     image_file_name = data['samples'][idx] + '.jpg'
-    path = os.path.join(dataset_path, f"images/{data['subdir']}/{image_file_name}")
+    path = os.path.join(dataset_path, f"{data['subdir']}/images/{image_file_name}")
 
     # rescale
     if scale:
@@ -66,7 +66,7 @@ def input_image(idx: int, data: PreprocessResponse, scale: bool = True) -> np.nd
 def get_bbs(idx: int, data: PreprocessResponse) -> np.ndarray:
     data = data.data
     labels_file_name = data['samples'][idx] + '.txt'
-    path = os.path.join(dataset_path, f"labels/{data['subdir']}/{labels_file_name}")
+    path = os.path.join(dataset_path, f"{data['subdir']}/labels/{labels_file_name}")
     bboxes = extract_bboxes_yolo(path)
     return bboxes
 
