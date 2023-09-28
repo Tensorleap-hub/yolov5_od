@@ -5,11 +5,20 @@ TRAIN_SIZE: 4
 VAL_SIZE: 4
 TEST_SIZE: 4
 
-BACKGROUND_LABEL: 81
-CLASSES: 80
-CONF_THRESH: 0.35
-CATEGORIES:
-  - person
+BACKGROUND_LABEL: 81  # always n_classes + 1
+CLASSES: 80  # number of different classes the model was trained on
+CONF_THRESH: 0.35  # the minimal confidence for a detection
+IMAGE_SIZE: [640, 640]
+MAX_BB_PER_IMAGE: 20  # maximal number of object per image
+MODEL_FORMAT: inference  # [inference, training]
+NMS_THRESH: 0.5
+OFFSET: 0
+OVERLAP_THRESH: 0.0625
+SMALL_BBS_TH: 0.0003
+STRIDES:
+- 8
+- 16
+- 32
 FEATURE_MAPS:
 - - 80
   - 80
@@ -36,15 +45,3 @@ BOX_SIZES:
     - 198
   - - 373
     - 326
-IMAGE_SIZE: [640, 640]
-LOAD_UNION_CATEGORIES_IMAGES: true
-MAX_BB_PER_IMAGE: 20
-MODEL_FORMAT: inference
-NMS_THRESH: 0.5
-OFFSET: 0
-OVERLAP_THRESH: 0.0625
-SMALL_BBS_TH: 0.0003
-STRIDES:
-- 8
-- 16
-- 32
