@@ -11,6 +11,10 @@ def load_od_config() -> Dict[str, Any]:
     with open(file_path, 'r') as file:
         config = yaml.safe_load(file)
 
+    # add any additional configuration keys here
+    # config[some_calculated_property] = value
+    config['CATEGORIES'] = ['object' for _ in range(config['CLASSES'])]
+
     return config
 
 

@@ -130,39 +130,39 @@ def calculate_iou_all_pairs(bboxes: np.ndarray, image_size: int) -> np.ndarray:
     return iou
 
 
-# def count_obj_bbox_occlusions(img: np.ndarray, bboxes: np.ndarray, occlusion_threshold: float, calc_avg_flag: bool) -> \
-#         Union[float, int]:
-#     """
-#     Counts the occluded bounding boxes of a specific object category in an image.
-#
-#     This function takes an image and an array of bounding boxes as input and counts the number of occluded
-#     bounding boxes of a specific object category. The occlusion is determined based on the Intersection over Union (IOU)
-#     between the bounding boxes.
-#
-#     Args:
-#         img (np.ndarray): Image represented as a NumPy array.
-#         bboxes (np.ndarray): Array of bounding boxes in the format [x, y, w, h, label].
-#         occlusion_threshold (float): Threshold value for determining occlusion based on IOU.
-#         calc_avg_flag (bool): Flag indicating whether to calculate the average occlusion count.
-#
-#     Returns:
-#         Union[float, int]: Number of occluded bounding boxes of the specified object category.
-#                            If calc_avg_flag is True, it returns the average occlusion count as a float.
-#                            If calc_avg_flag is False, it returns the total occlusion count as an integer.
-#
-#     """
-#     img_size = img.shape[0]
-#     label = CONFIG["CATEGORIES"].index('person')
-#     obj_bbox = bboxes[bboxes[..., -1] == label]
-#     if len(obj_bbox) == 0:
-#         return 0.0
-#     else:
-#         ious = calculate_iou_all_pairs(obj_bbox, img_size)
-#         occlusion_count = len(ious[ious > occlusion_threshold])
-#         if calc_avg_flag:
-#             return int(occlusion_count / len(obj_bbox))
-#         else:
-#             return occlusion_count
+def count_obj_bbox_occlusions(img: np.ndarray, bboxes: np.ndarray, occlusion_threshold: float, calc_avg_flag: bool) -> \
+        Union[float, int]:
+    """
+    Counts the occluded bounding boxes of a specific object category in an image.
+
+    This function takes an image and an array of bounding boxes as input and counts the number of occluded
+    bounding boxes of a specific object category. The occlusion is determined based on the Intersection over Union (IOU)
+    between the bounding boxes.
+
+    Args:
+        img (np.ndarray): Image represented as a NumPy array.
+        bboxes (np.ndarray): Array of bounding boxes in the format [x, y, w, h, label].
+        occlusion_threshold (float): Threshold value for determining occlusion based on IOU.
+        calc_avg_flag (bool): Flag indicating whether to calculate the average occlusion count.
+
+    Returns:
+        Union[float, int]: Number of occluded bounding boxes of the specified object category.
+                           If calc_avg_flag is True, it returns the average occlusion count as a float.
+                           If calc_avg_flag is False, it returns the total occlusion count as an integer.
+
+    """
+    img_size = img.shape[0]
+    label = CONFIG["CATEGORIES"].index('object')
+    obj_bbox = bboxes[bboxes[..., -1] == label]
+    if len(obj_bbox) == 0:
+        return 0.0
+    else:
+        ious = calculate_iou_all_pairs(obj_bbox, img_size)
+        occlusion_count = len(ious[ious > occlusion_threshold])
+        if calc_avg_flag:
+            return int(occlusion_count / len(obj_bbox))
+        else:
+            return occlusion_count
 
 
 def remove_label_from_bbs(bbs_object_array, removal_label, add_to_label):

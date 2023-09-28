@@ -21,7 +21,6 @@ def subset_images() -> List[PreprocessResponse]:
     """
     This function returns the training and validation datasets in the format expected by tensorleap
     """
-    CONFIG['CATEGORIES'] = [str(i) for i in range(CONFIG['CLASSES'])]
     train = load_yolo_dataset(dataset_path, split='train')
     val = load_yolo_dataset(dataset_path, split='val')
     test = load_yolo_dataset(dataset_path, split='test')
